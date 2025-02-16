@@ -8,6 +8,7 @@ header {
     display: flex;
     gap: 1rem;
   }
+
   header nav ul li a {
     color: #fff;
     text-decoration: none;
@@ -56,6 +57,7 @@ header {
     border-radius: 0.25rem;
     cursor: pointer;
   }
+  
   button[type="submit"]:hover {
     background: #145c32;
   }
