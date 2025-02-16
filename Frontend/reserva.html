@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Reserva</title>
+  <link rel="stylesheet" href="styles/reserva.css" />
+</head>
+<body>
+
+  <div class="reserva-container">
+    <h1>Crear Reserva</h1>
+    <form id="reservaForm">
+      
+      <!-- FECHAS -->
+      <div class="form-group">
+        <label for="fechaInicio">Fecha Inicio</label>
+        <input type="date" id="fechaInicio" name="fechaInicio" required />
+      </div>
+
+      <div class="form-group">
+        <label for="fechaFin">Fecha Fin</label>
+        <input type="date" id="fechaFin" name="fechaFin" required />
+      </div>
+
+      <!-- ESTADO -->
+      <div class="form-group">
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado" required>
+          <option value="Creada">Creada</option>
+          <option value="Confirmada">Confirmada</option>
+          <option value="Cancelada">Cancelada</option>
+          <!-- Agrega los estados que maneje tu lógica -->
+        </select>
+      </div>
+
+      <!-- USUARIO -->
+      <div class="form-group">
+        <label for="usuarioSelect">Usuario</label>
+        <select id="usuarioSelect" required>
+          <!-- Se llenará dinámicamente con loadUsuarios() -->
+        </select>
+      </div>
+
+      <!-- CLIENTE -->
+      <div class="form-group">
+        <label for="clienteSelect">Cliente</label>
+        <select id="clienteSelect" required>
+          <!-- Se llenará dinámicamente con loadClientes() -->
+        </select>
+      </div>
+
+      <!-- HABITACIÓN -->
+      <div class="form-group">
+        <label for="habitacionSelect">Habitación</label>
+        <select id="habitacionSelect" required>
+          <!-- Se llenará dinámicamente con loadHabitaciones() -->
+        </select>
+      </div>
+
+      <button type="submit">Crear Reserva</button>
+    </form>
+  </div>
+
+  <script>
+    // Cuando cargue la página, vamos a llenar las opciones:
+    window.addEventListener('DOMContentLoaded', () => {
+      loadUsuarios();
+      loadClientes();
+      loadHabitaciones();
+    });
+
+    // Cargar usuarios existentes
+    async function loadUsuarios() {
+      try {
+        // Ajusta la ruta a tu endpoint real de usuarios
+        const respuesta = await fetch('http://localhost:8080/api/usuarios');
+        if (respuesta.ok) {
+          const usuarios = await respuesta.json();
+          const usuarioSelect = document.getElementById('usuarioSelect');
+          usuarios.forEach(u => {
+            const option = document.createElement('option');
+            option.value = u.idUsuario;  // Ajusta la propiedad real
+            option.textContent = `Usuario #${u.idUsuario} - ${u.nombre}`;
+            usuarioSelect.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+      }
+    }
+
+    // Cargar clientes existentes
+    async function loadClientes() {
+      try {
+        // Ajusta la ruta a tu endpoint real de clientes
+        const respuesta = await fetch('http://localhost:8080/api/clientes');
+        if (respuesta.ok) {
+          const clientes = await respuesta.json();
+          const clienteSelect = document.getElementById('clienteSelect');
+          clientes.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.idCliente;  // Ajusta la propiedad real
+            option.textContent = `Cliente #${c.idCliente} - ${c.nombre}`;
+            clienteSelect.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar clientes:', error);
+      }
+    }
+
+    // Cargar habitaciones existentes
+    async function loadHabitaciones() {
+      try {
+        // Ajusta la ruta a tu endpoint real de habitaciones
+        const respuesta = await fetch('http://localhost:8080/api/habitaciones');
+        if (respuesta.ok) {
+          const habitaciones = await respuesta.json();
+          const habitacionSelect = document.getElementById('habitacionSelect');
+          habitaciones.forEach(h => {
+            const option = document.createElement('option');
+            option.value = h.idHabitacion;  // Ajusta la propiedad real
+            option.textContent = `Habitación #${h.idHabitacion} - ${h.tipo}`;
+            habitacionSelect.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar habitaciones:', error);
+      }
+    }
+
+    // Manejo del Submit
+    document.getElementById('reservaForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // 1. Capturar los valores del formulario
+      const fechaInicio = document.getElementById('fechaInicio').value;
+      const fechaFin = document.getElementById('fechaFin').value;
+      const estado = document.getElementById('estado').value;
+
+      const idUsuario = document.getElementById('usuarioSelect').value;
+      const idCliente = document.getElementById('clienteSelect').value;
+      const idHabitacion = document.getElementById('habitacionSelect').value;
+
+      // 2. Construir el objeto para tu backend (con la misma estructura que usas en Postman)
+      const data = {
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin,
+        estado: estado,
+        usuario: { idUsuario: parseInt(idUsuario) },
+        cliente: { idCliente: parseInt(idCliente) },
+        habitacion: { idHabitacion: parseInt(idHabitacion) }
+      };
+
+      try {
+        // 3. Petición al endpoint de reservas
+        const respuesta = await fetch('http://localhost:8080/api/reservas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        // 4. Verificar respuesta
+        if (!respuesta.ok) {
+          const msgError = await respuesta.text();
+          alert('Error al crear la reserva: ' + msgError);
+        } else {
+          alert('Reserva creada exitosamente');
+          // Aquí podrías redirigir a otra página o limpiar el formulario
+          // location.href = 'otraPagina.html';
+        }
+      } catch (error) {
+        console.error('Error en la petición:', error);
+        alert('Ocurrió un error al crear la reserva');
+      }
+    });
+  </script>
+
+</body>
+</html>

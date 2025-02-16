@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Clientes</title>
+  <!-- Vinculamos un CSS para clientes -->
+  <link rel="stylesheet" href="styles/clientes.css" />
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <header>
+    <nav>
+      <ul>
+        <!-- El enlace a esta misma página (Clientes) -->
+        <li><a href="clientes.html">Clientes</a></li>
+        <!-- El enlace que te lleva a hoteles.html -->
+        <li><a href="hoteles.html">Hoteles</a></li>
+        <li><a href="facturas.html">Facturas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container-clientes">
+    <h1>Registrar Cliente</h1>
+    <form id="clienteForm">
+      <label for="nombre">Nombre</label>
+      <input 
+        type="text" 
+        id="nombre" 
+        name="nombre" 
+        placeholder="Ej: Fabricio"
+        required 
+      />
+
+      <label for="apellido">Apellido</label>
+      <input 
+        type="text" 
+        id="apellido" 
+        name="apellido" 
+        placeholder="Ej: Ramírez"
+        required 
+      />
+
+      <label for="documento">Documento</label>
+      <input 
+        type="text" 
+        id="documento" 
+        name="documento" 
+        placeholder="Ej: 09211246985"
+        required 
+      />
+
+      <label for="telefono">Teléfono</label>
+      <input 
+        type="text" 
+        id="telefono" 
+        name="telefono" 
+        placeholder="Ej: 0960326922"
+        required 
+      />
+
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        placeholder="Ej: fabri.ramirez@gmail.com"
+        required 
+      />
+
+      <button type="submit">Crear Cliente</button>
+    </form>
+  </div>
+
+  <!-- Script para manejar el envío de datos al backend -->
+  <script>
+    document.getElementById('clienteForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // 1. Obtenemos valores del formulario
+      const nombre = document.getElementById('nombre').value;
+      const apellido = document.getElementById('apellido').value;
+      const documento = document.getElementById('documento').value;
+      const telefono = document.getElementById('telefono').value;
+      const email = document.getElementById('email').value;
+
+      // 2. Construimos el objeto
+      const data = { 
+        nombre, 
+        apellido, 
+        documento, 
+        telefono, 
+        email 
+      };
+
+      try {
+        // 3. Petición POST
+        const respuesta = await fetch('http://localhost:8080/api/clientes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        // 4. Verificamos la respuesta
+        if (!respuesta.ok) {
+          const mensajeError = await respuesta.text();
+          alert('Error al crear cliente: ' + mensajeError);
+        } else {
+          alert('Cliente registrado exitosamente');
+        }
+      } catch (error) {
+        console.error('Error en la petición:', error);
+        alert('Ocurrió un error al crear el cliente');
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Hoteles</title>
+  <!-- Vinculamos un CSS para hoteles/habitaciones -->
+  <link rel="stylesheet" href="styles/hoteles.css" />
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <header>
+    <nav>
+      <ul>
+        <li><a href="clientes.html">Clientes</a></li>
+        <li><a href="hoteles.html">Hoteles</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container-hoteles">
+    <h1>Crear Habitación</h1>
+    <form id="hotelForm">
+      <label for="tipo">Tipo</label>
+      <input 
+        type="text" 
+        id="tipo" 
+        name="tipo" 
+        placeholder="Ej: Doble, Suite..." 
+        required 
+      />
+
+      <label for="estado">Estado</label>
+      <input 
+        type="text" 
+        id="estado" 
+        name="estado" 
+        placeholder="Ej: Disponible, Ocupada..." 
+        required 
+      />
+
+      <label for="precio">Precio</label>
+      <input 
+        type="number" 
+        step="0.01" 
+        id="precio" 
+        name="precio"
+        placeholder="Ej: 100.0"
+        required
+      />
+
+      <button type="submit">Crear Habitación</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('hotelForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // 1. Obtener valores
+      const tipo = document.getElementById('tipo').value;
+      const estado = document.getElementById('estado').value;
+      const precio = parseFloat(document.getElementById('precio').value);
+
+      // 2. Construir objeto
+      const data = { tipo, estado, precio };
+
+      try {
+        // 3. Petición POST a tu endpoint de habitaciones
+        const respuesta = await fetch('http://localhost:8080/api/habitaciones', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        // 4. Verificar respuesta
+        if (!respuesta.ok) {
+          const msgError = await respuesta.text();
+          alert('Error al crear habitación: ' + msgError);
+        } else {
+          alert('Habitación creada exitosamente');
+        }
+      } catch (error) {
+        console.error('Error en la petición:', error);
+        alert('Ocurrió un error al crear la habitación');
+      }
+    });
+  </script>
+
+</body>
+</html>

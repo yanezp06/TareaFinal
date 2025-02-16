@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login y Registro</title>
+  <!-- Vinculamos el archivo CSS externo -->
+  <link rel="stylesheet" href="styles/styles.css" />
+</head>
+<body>
+
+  <div class="container-login-reg">
+    <!-- Sección de Login -->
+    <div class="login-section">
+      <h2>Iniciar Sesión</h2>
+      <form>
+        <label for="emailLogin">Correo electrónico</label>
+        <input 
+          type="email" 
+          id="emailLogin" 
+          name="emailLogin" 
+          placeholder="Ingresa tu correo" 
+          required 
+        />
+
+        <label for="passwordLogin">Contraseña</label>
+        <input 
+          type="password" 
+          id="passwordLogin" 
+          name="passwordLogin" 
+          placeholder="Ingresa tu contraseña" 
+          required
+        />
+
+        <button 
+        type="button" 
+        onclick="window.location.href='clientes.html';">
+        Entrar
+        </button>
+      </form>
+    </div>
+
+   <!-- Sección de Registro -->
+  <div class="register-section">
+    <h2>Registrarse</h2>
+    <form id="registerForm">
+      <label for="nameRegister">Nombre</label>
+      <input 
+        type="text" 
+        id="nameRegister" 
+        name="nameRegister" 
+        placeholder="Ingresa tu nombre" 
+        required 
+      />
+
+      <label for="rolRegister">Rol</label>
+      <select id="rolRegister" name="rolRegister" required>
+        <option value="">Seleccione un rol</option>
+        <option value="Administrador">Administrador</option>
+        <option value="Usuario">Usuario</option>
+      </select>
+
+      <label for="emailRegister">Correo electrónico</label>
+      <input 
+        type="email" 
+        id="emailRegister" 
+        name="emailRegister" 
+        placeholder="Ingresa tu correo" 
+        required 
+      />
+
+      <label for="passwordRegister">Contraseña</label>
+      <input 
+        type="password" 
+        id="passwordRegister" 
+        name="passwordRegister" 
+        placeholder="Ingresa tu contraseña" 
+        required
+      />
+
+      <button type="submit">Registrar</button>
+    </form>
+  </div>
+
+  <script>
+    // Al cargar la página, escuchamos el envío del formulario
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+      event.preventDefault(); // Evitamos que se recargue la página
+
+      // Obtenemos los valores del formulario
+      const nombre = document.getElementById('nameRegister').value;
+      const rol = document.getElementById('rolRegister').value;
+      const email = document.getElementById('emailRegister').value;
+      const contraseña = document.getElementById('passwordRegister').value;
+
+      // Construimos el objeto que pide tu backend
+      const data = {
+        nombre: nombre,
+        rol: rol,
+        email: email,
+        contraseña: contraseña
+      };
+
+      try {
+        // Enviamos la petición POST a tu API
+        const respuesta = await fetch('http://localhost:8080/api/usuarios', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!respuesta.ok) {
+          // Error de servidor o validación
+          const msgError = await respuesta.text();
+          alert('Error al registrar usuario: ' + msgError);
+        } else {
+          // Registro exitoso
+          alert('Usuario registrado exitosamente');
+          // Aquí podrías redirigir a otra página si quieres
+          // location.href = '/ruta-de-tu-preferencia';
+        }
+      } catch (error) {
+        console.error('Error en la petición:', error);
+        alert('Ocurrió un error al registrar el usuario');
+      }
+    });
+  </script>
+
+</body>
+</html>
